@@ -1,6 +1,7 @@
 package day02;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Recipe {
@@ -20,9 +21,7 @@ public class Recipe {
 
     public void addIngredients(String ingredient, String... ingredients) {
         this.ingredients.add(ingredient);
-        for (String actual : ingredients) {
-            this.ingredients.add(actual);
-        }
+        this.ingredients.addAll(Arrays.asList(ingredients));
     }
 
     public String getName() {

@@ -2,11 +2,9 @@ package day02;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RecipeTest {
-
 
     @Test
     void createWithNameTest() {
@@ -39,6 +37,7 @@ class RecipeTest {
         assertEquals(2, recipe.getIngredients().size());
         assertEquals("tészta", recipe.getIngredients().get(0));
         assertEquals("túró", recipe.getIngredients().get(1));
+        assertArrayEquals(new String[]{"tészta", "túró"}, recipe.getIngredients().toArray());
     }
 
     @Test
@@ -48,5 +47,6 @@ class RecipeTest {
         assertEquals(3, recipe.getIngredients().size());
         assertEquals("tészta", recipe.getIngredients().get(0));
         assertEquals("szalonna", recipe.getIngredients().get(2));
+        assertArrayEquals(new String[]{"tészta", "túró", "szalonna"}, recipe.getIngredients().toArray());
     }
 }
