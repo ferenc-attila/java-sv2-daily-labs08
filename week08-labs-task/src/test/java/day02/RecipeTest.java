@@ -33,6 +33,15 @@ class RecipeTest {
     }
 
     @Test
+    void addMTwoIngredientsTest() {
+        Recipe recipe = new Recipe("túrós tészta");
+        recipe.addIngredients("tészta", "túró");
+        assertEquals(2, recipe.getIngredients().size());
+        assertEquals("tészta", recipe.getIngredients().get(0));
+        assertEquals("túró", recipe.getIngredients().get(1));
+    }
+
+    @Test
     void addMoreIngredientsTest() {
         Recipe recipe = new Recipe("túrós tészta");
         recipe.addIngredients("tészta", "túró", "szalonna");
