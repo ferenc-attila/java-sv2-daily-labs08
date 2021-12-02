@@ -14,7 +14,7 @@ class FileReaderBetterSolutionTest {
 
     @Test
     void findSmallestDifferenceTest() {
-        assertEquals("Leicester", fileReaderBetterSolution.findSmallestDifference("football.dat"));
+        assertEquals("Aston_Villa", fileReaderBetterSolution.findSmallestDifference("football.dat"));
     }
 
     @Test
@@ -25,7 +25,7 @@ class FileReaderBetterSolutionTest {
     @Test
     void getSmallestDifferenceTest() {
         List<String> strippedValues = new ArrayList<>(Arrays.asList("Monday,10,8", "Tuesday,12,5", "Wednesday,5,7", "Thursday,4,12", "Friday,5,3"));
-        assertEquals("Thursday", fileReaderBetterSolution.getSmallestDifference(strippedValues));
+        assertEquals("Monday", fileReaderBetterSolution.getSmallestDifference(strippedValues));
     }
 
     @Test

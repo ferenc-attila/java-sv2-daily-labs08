@@ -33,17 +33,17 @@ public class FileReaderBetterSolution {
 
     public String getSmallestDifference(List<String> strippedValues) {
         int minDifference = Integer.MAX_VALUE;
-        String value = "";
+        String result = "";
         for (String row : strippedValues) {
-            String day = row.split(",")[0];
+            String value = row.split(",")[0];
             int max = Integer.parseInt(row.split(",")[1]);
             int min = Integer.parseInt(row.split(",")[2]);
-            if (max - min < minDifference) {
-                minDifference = max - min;
-                value = day;
+            if (Math.abs(max - min) < minDifference) {
+                minDifference = Math.abs(max - min);
+                result = value;
             }
         }
-        return value;
+        return result;
     }
 
     public List<String> createStrippedValues(List<String> cleanedTable, int[] columnBounds) {

@@ -22,7 +22,7 @@ public class FileReader {
 
     public String findSmallestDifference(String filename) {
         List<String> contentOfFile = readFile(filename);
-        return getTeam (contentOfFile);
+        return getTeam(contentOfFile);
     }
 
     private int getDayWithSmallestSpread(List<Integer> spreads) {
@@ -61,7 +61,7 @@ public class FileReader {
             givenGoal = (Integer.parseInt(contentOfFile.get(i).substring(43, 45)));
             receivedGoal = (Integer.parseInt(contentOfFile.get(i).substring(50, 52)));
             teams.add(contentOfFile.get(i).substring(7, 23).trim());
-            differences.add(givenGoal - receivedGoal);
+            differences.add(Math.abs(givenGoal - receivedGoal));
         }
         int minDifference = Integer.MAX_VALUE;
         int teamIndex = -1;
