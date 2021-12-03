@@ -18,7 +18,7 @@ public class FileReaderBetterSolution {
     public String findSmallestDifference(String filename) {
         int[] columnBounds = {7, 23, 43, 45, 50, 52};
         List<String> contentOfFile = readFile(filename);
-        List<String> cleanedTable = cleanTable(contentOfFile, columnBounds);
+        List<String> cleanedTable = removeInvalidRows(contentOfFile, columnBounds, filename);
         List<String> strippedValues = createStrippedValues(cleanedTable, columnBounds);
         return getSmallestDifference(strippedValues);
     }
@@ -26,7 +26,7 @@ public class FileReaderBetterSolution {
     public int findSmallestTemperatureSpread(String filename) {
         int[] columnBounds = {2, 4, 6, 8, 12, 14};
         List<String> contentOfFile = readFile(filename);
-        List<String> cleanedTable = cleanTable(contentOfFile, columnBounds);
+        List<String> cleanedTable = removeInvalidRows(contentOfFile, columnBounds, filename);
         List<String> strippedValues = createStrippedValues(cleanedTable, columnBounds);
         return Integer.parseInt(getSmallestDifference(strippedValues));
     }
@@ -57,8 +57,8 @@ public class FileReaderBetterSolution {
         return strippedValues;
     }
 
-    public List<String> cleanTable(List<String> contentOfFile, int[] columnBounds) {
-        List<String> rowsToRemove = getRowsToRemove(contentOfFile, columnBounds);
+    public List<String> removeInvalidRows(List<String> contentOfFile, int[] columnBounds, String filename) {
+        List<String> rowsToRemove = getRowsToRemove(contentOfFile, columnBounds, filename);
         if (!rowsToRemove.isEmpty()) {
             contentOfFile.removeAll(rowsToRemove);
         }
@@ -82,17 +82,21 @@ public class FileReaderBetterSolution {
         strippedValues.add(sb.toString());
     }
 
-    private List<String> getRowsToRemove(List<String> contentOfFile, int[] columnBounds) {
+    private List<String> getRowsToRemove(List<String> contentOfFile, int[] columnBounds, String filename) {
         List<String> rowsToRemove = new ArrayList<>();
         for (String row : contentOfFile) {
-            if (!isValidRow(row, columnBounds)) {
+            if (!isValidRow(row, columnBounds, filename)) {
                 rowsToRemove.add(row);
             }
         }
         return rowsToRemove;
     }
 
-    private boolean isValidRow(String row, int[] columnBounds) {
-        return row.length() >= columnBounds[5] + 1 && Character.isDigit(row.charAt(columnBounds[2])) && Character.isDigit(row.charAt(columnBounds[4]));
+    private boolean isValidRow(String row, int[] columnBounds, String filename) {
+        if ("football.dat".equals(filename)) {
+            return row.length() >= columnBounds[5] + 1 && Character.isDigit(row.charAt(columnBounds[2])) && Character.isDigit(row.charAt(columnBounds[4]));
+        } else {
+            return !row.isBlank() && Character.isDigit(row.charAt(columnBounds[0] + 1));
+        }
     }
 }
