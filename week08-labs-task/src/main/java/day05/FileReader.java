@@ -9,9 +9,13 @@ import java.util.List;
 public class FileReader {
 
     public static void main(String[] args) {
-        day04.FileReader fileReader = new day04.FileReader();
-        System.out.println(fileReader.findSmallestTemperatureSpread("weather.dat"));
-        System.out.println(fileReader.findSmallestDifference("football.dat"));
+        FileReader fileReader = new FileReader();
+
+        int day = fileReader.findSmallestTemperatureSpread("weather.dat");
+        String team = fileReader.findSmallestDifference("football.dat");
+
+        System.out.println(day);
+        System.out.println(team);
     }
 
     public int findSmallestTemperatureSpread(String filename) {
