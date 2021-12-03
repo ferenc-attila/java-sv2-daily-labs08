@@ -1,88 +1,104 @@
 package day05;
 
+import day04.FileReaderBetterSolution;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FileReader {
 
     public static void main(String[] args) {
         FileReader fileReader = new FileReader();
-
-        int day = fileReader.findSmallestTemperatureSpread("weather.dat");
-        String team = fileReader.findSmallestDifference("football.dat");
-
-        System.out.println(day);
-        System.out.println(team);
-    }
-
-    public int findSmallestTemperatureSpread(String filename) {
-        List<String> contentOfFile = readFile(filename);
-        List<Integer> spreads = getSpreads(contentOfFile);
-        return getDayWithSmallestSpread(spreads) + 1;
+        System.out.println(fileReader.findSmallestTemperatureSpread("weather.dat"));
+        System.out.println(fileReader.findSmallestDifference("football.dat"));
     }
 
     public String findSmallestDifference(String filename) {
+        int[] columnBounds = {7, 23, 43, 45, 50, 52};
         List<String> contentOfFile = readFile(filename);
-        return getTeam(contentOfFile);
+        List<String> cleanedTable = removeInvalidRows(contentOfFile, columnBounds, filename);
+        List<String> strippedValues = createStrippedValues(cleanedTable, columnBounds);
+        return getSmallestDifference(strippedValues);
     }
 
-    private int getDayWithSmallestSpread(List<Integer> spreads) {
-        int spread = Integer.MAX_VALUE;
-        int day = 0;
-        for (int i = 0; i < spreads.size(); i++) {
-            if (spreads.get(i) < spread) {
-                spread = spreads.get(i);
-                day = i;
-            }
-        }
-        return day;
+    public int findSmallestTemperatureSpread(String filename) {
+        int[] columnBounds = {2, 4, 6, 8, 12, 14};
+        List<String> contentOfFile = readFile(filename);
+        List<String> cleanedTable = removeInvalidRows(contentOfFile, columnBounds, filename);
+        List<String> strippedValues = createStrippedValues(cleanedTable, columnBounds);
+        return Integer.parseInt(getSmallestDifference(strippedValues));
     }
 
-    private List<Integer> getSpreads(List<String> contentOfFile) {
-        int minTemp;
-        int maxTemp;
-        List<Integer> spreads = new ArrayList<>();
-        for (int i = 2; i < contentOfFile.size() - 1; i++) {
-            maxTemp = (Integer.parseInt(contentOfFile.get(i).substring(6, 8).trim()));
-            minTemp = (Integer.parseInt(contentOfFile.get(i).substring(12, 14).trim()));
-            spreads.add(maxTemp - minTemp);
-        }
-        return spreads;
-    }
-
-    private String getTeam(List<String> contentOfFile) {
-        int givenGoal;
-        int receivedGoal;
-        List<String> teams = new ArrayList<>();
-        List<Integer> differences = new ArrayList<>();
-        for (int i = 1; i < contentOfFile.size(); i++) {
-            if (i == 18) {
-                continue;
-            }
-            givenGoal = (Integer.parseInt(contentOfFile.get(i).substring(43, 45)));
-            receivedGoal = (Integer.parseInt(contentOfFile.get(i).substring(50, 52)));
-            teams.add(contentOfFile.get(i).substring(7, 23).trim());
-            differences.add(Math.abs(givenGoal - receivedGoal));
-        }
+    public String getSmallestDifference(List<String> strippedValues) {
         int minDifference = Integer.MAX_VALUE;
-        int teamIndex = -1;
-        for (int i = 0; i < differences.size(); i++) {
-            if (differences.get(i) < minDifference) {
-                minDifference = differences.get(i);
-                teamIndex = i;
+        String result = "";
+        for (String row : strippedValues) {
+            String value = row.split(",")[0];
+            int max = Integer.parseInt(row.split(",")[1]);
+            int min = Integer.parseInt(row.split(",")[2]);
+            if (Math.abs(max - min) < minDifference) {
+                minDifference = Math.abs(max - min);
+                result = value;
             }
         }
-        return teams.get(teamIndex);
+        return result;
     }
 
-    private List<String> readFile(String filename) {
+    public List<String> createStrippedValues(List<String> cleanedTable, int[] columnBounds) {
+        if (columnBounds.length < 6) {
+            throw new IllegalArgumentException("Not enough indexes to select all three columns!" + Arrays.toString(columnBounds));
+        }
+        List<String> strippedValues = new ArrayList<>();
+        for (String row : cleanedTable) {
+            createRow(columnBounds, strippedValues, row);
+        }
+        return strippedValues;
+    }
+
+    public List<String> removeInvalidRows(List<String> contentOfFile, int[] columnBounds, String filename) {
+        List<String> rowsToRemove = getRowsToRemove(contentOfFile, columnBounds, filename);
+        if (!rowsToRemove.isEmpty()) {
+            contentOfFile.removeAll(rowsToRemove);
+        }
+        return contentOfFile;
+    }
+
+    public List<String> readFile(String filename) {
         try {
             return Files.readAllLines(Paths.get("src/main/resources/" + filename));
         } catch (IOException ioe) {
             throw new IllegalArgumentException("Unable to  read file", ioe);
+        }
+    }
+
+    private void createRow(int[] columnBounds, List<String> strippedValues, String row) {
+        String separator = ",";
+        StringBuilder sb = new StringBuilder();
+        sb.append(row.substring(columnBounds[0], columnBounds[1]).trim()).append(separator);
+        sb.append(row.substring(columnBounds[2], columnBounds[3]).trim()).append(separator);
+        sb.append(row.substring(columnBounds[4], columnBounds[5]).trim());
+        strippedValues.add(sb.toString());
+    }
+
+    private List<String> getRowsToRemove(List<String> contentOfFile, int[] columnBounds, String filename) {
+        List<String> rowsToRemove = new ArrayList<>();
+        for (String row : contentOfFile) {
+            if (!isValidRow(row, columnBounds, filename)) {
+                rowsToRemove.add(row);
+            }
+        }
+        return rowsToRemove;
+    }
+
+    private boolean isValidRow(String row, int[] columnBounds, String filename) {
+        if ("football.dat".equals(filename)) {
+            return row.length() >= columnBounds[5] + 1 && Character.isDigit(row.charAt(columnBounds[2])) && Character.isDigit(row.charAt(columnBounds[4]));
+        } else {
+            return !row.isBlank() && Character.isDigit(row.charAt(columnBounds[0] + 1));
         }
     }
 }
